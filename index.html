@@ -170,12 +170,12 @@
         
         if(score === brickInfo.count.row*brickInfo.count.col*10) {
             ball.alpha = false;
-                delay(function(){
+               /* delay(function(){
                 alert('You won the game, congratulations!');
                 location.reload();
-            }, 500 ); // end delay 
-        /* alert('You won the game, congratulations!');
-        location.reload(); */
+            }, 500 ); // end delay */ 
+            alert('You won the game, congratulations!');
+            location.reload();
         }
     }
     
