@@ -17,8 +17,8 @@
         preload: preload, create: create, update: update
         });
     
-    const BALL_SPEED = 300;
-    const BALL_ACCEL = 1.01;
+    const BALL_SPEED = 325;
+    const BALL_ACCEL = 1.03;
     const EASY = 3;
     const MEDIUM = 5;
     const HARD = 7;
@@ -46,7 +46,7 @@
     
     var playing = false;
     var startButton;
-    var difficulty = EASY;
+    var difficulty = HARD;
     
     /*var delay = ( function() {
         var timer = 0;
@@ -135,8 +135,8 @@
         // Add hit counter
         hitsText = game.add.text(game.world.width *0.5 - 27, 5, 'Hits: ' + hits, textStyle);
         // hitsText.anchor.set(1,0);
-        velocityText = game.add.text(game.world.width *0.5 - 27, 5, '\n Velocity: ' + bricksKilled, textStyle);
-        velocityText.visible = false;
+        velocityText = game.add.text(game.world.width *0.5 - 27, 5, '\n Velocity: ' + velocity, textStyle);
+        //velocityText.visible = false;
         
         // Start Button
         startButton = game.add.button(game.world.width*0.5, game.world.height*0.60, 'button', startGame, this, 1, 0, 2);
@@ -148,7 +148,6 @@
         // Search for collision between ball & paddle
         game.physics.arcade.collide(ball, paddle, ballHitPaddle);
         game.physics.arcade.collide(ball, bricks, ballHitBrick);
-        velocityText.setText('\n Velocity: ' + bricksKilled, textStyle);
         if(playing) {
             paddle.x = game.input.x || game.world.width*0.5;
     }    }
@@ -234,9 +233,12 @@
        // ball.animations.play('wobble');
         
         ball.body.velocity.x = -1*6.5*(paddle.x-ball.x);
-        ball.body.velocity.y = ball.body.velocity.y * BALL_ACCEL;
+        if (velocity < 600) 
+        {
+            ball.body.velocity.y = ball.body.velocity.y * BALL_ACCEL;
+        }
         velocity = Math.abs(ball.body.velocity.y * BALL_ACCEL);
-        velocityText.setText('\n Velocity: ' + bricksKilled, textStyle);
+        velocityText.setText('\n Velocity: ' + velocity, textStyle);
 }
     
     function startGame() {
