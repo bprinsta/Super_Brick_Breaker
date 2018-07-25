@@ -17,14 +17,15 @@
         preload: preload, create: create, update: update
         });
     
-    const BALL_SPEED = 325;
-    const BALL_ACCEL = 1.03;
+    const BALL_SPEED = 400;
+    const BALL_ACCEL = 1.04;
     const EASY = 3;
     const MEDIUM = 5;
     const HARD = 7;
+    var MAX_VELOCITY = 650;
     var velocity = BALL_SPEED;
     var velocityText;
-
+    
     // Game objects
     var ball;
     var paddle;
@@ -48,13 +49,7 @@
     var startButton;
     var difficulty = HARD;
     
-    /*var delay = ( function() {
-        var timer = 0;
-        return function(callback, ms) {
-            clearTimeout (timer);
-            timer = setTimeout(callback, ms);
-        };
-    })(); */
+   // var background_music = new Sound(game, 'assets/gameplay.mp3', 1, true);
     
     function preload() {
         
@@ -185,6 +180,7 @@
     function ballHitBrick(ball, brick) {
         var killTween = game.add.tween(brick.scale);
         killTween.to({x:0,y:0}, 100, Phaser.Easing.Linear.None);
+        brick.body.enable = false;
         killTween.onComplete.addOnce(function(){
             brick.kill();
         }, this);
@@ -233,7 +229,7 @@
        // ball.animations.play('wobble');
         
         ball.body.velocity.x = -1*6.5*(paddle.x-ball.x);
-        if (velocity < 600) 
+        if (velocity < MAX_VELOCITY) 
         {
             ball.body.velocity.y = ball.body.velocity.y * BALL_ACCEL;
         }
@@ -243,6 +239,7 @@
     
     function startGame() {
         startButton.destroy();
+       // background_music.play();
         ball.body.velocity.set(0, -BALL_SPEED);
         playing = true;
 }
