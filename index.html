@@ -2,14 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Super Brick Breaker</title>
+    <title>Brick Breaker</title>
     <style>* { padding: 0; margin: 0; }</style>
     <script src="js/phaser.min.js"></script>
 </head>
 <body>
     <h1>
-        <div style="text-align:center;"> 
-            Super Brick Breaker
+        <div style="text-align:center; color: #004f80; margin-top: 20px;" > 
+            Brick Breaker
         </div>
     </h1>
 <script>
@@ -17,8 +17,13 @@
         preload: preload, create: create, update: update
         });
     
-    const BALL_SPEED = 200;
-    const BALL_ACCEL = 1.05;
+    const BALL_SPEED = 300;
+    const BALL_ACCEL = 1.01;
+    const EASY = 3;
+    const MEDIUM = 5;
+    const HARD = 7;
+    var velocity = BALL_SPEED;
+    var velocityText;
 
     // Game objects
     var ball;
@@ -26,6 +31,7 @@
     var bricks;
     var newBrick;
     var brickInfo;
+    var bricksKilled = 0;
     
     // Game text
     var scoreText;
@@ -35,16 +41,20 @@
     var lifeLostText;
     var hits = 0;
     var hitsText;
+    var youWon;
+    var replayHere;
     
     var playing = false;
     var startButton;
-    var delay = ( function() {
+    var difficulty = EASY;
+    
+    /*var delay = ( function() {
         var timer = 0;
         return function(callback, ms) {
             clearTimeout (timer);
             timer = setTimeout(callback, ms);
         };
-    })();
+    })(); */
     
     function preload() {
         
@@ -55,7 +65,7 @@
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
         
-        game.stage.backgroundColor = 'd4d4d4';
+        game.stage.backgroundColor = '004f80';
         
         // game.load.image('asset name', 'asset locale')
         game.load.image('ball', 'img/pokeball.png');
@@ -63,6 +73,8 @@
         game.load.image('brick', 'img/brick.png');
         //game.load.spritesheet('ball', 'img/wobble.png', 20, 20);
         game.load.spritesheet('button', 'img/button.png', 360, 120);
+        
+        game.time.desiredFps = 60;
 
     }
     
@@ -95,9 +107,11 @@
         ball.body.bounce.set(1);
         paddle.body.immovable = true;
         
-        initBricks();
+        initBricks(difficulty);
         
-        textStyle = { font: '18px Bookman', fill: '#000' };
+        textStyle = { font: '22px Bookman', fill: '#fff' };
+        textStyle2 = { font: '20px Arial', fill: '#fff', fontStyle: 'italic'};
+        textStyle3 = { font: '22px Arial Black', fill: '#fff' };
         
         // game.add.text(xPosition, yPosition, rendered text, font style)
         scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
@@ -105,16 +119,28 @@
         // Add lives counter
         livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives, textStyle);
         livesText.anchor.set(1,0);
-        lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5, 'You lost a life! :(', textStyle);
+        
+        // Lost Life Notification
+        lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5, 'You lost a life! :(', textStyle2);
         lifeLostText.anchor.set(0.5);
         lifeLostText.visible = false;
         
-        // Add hit counter
-        hitsText = game.add.text(game.world.width *0.5 - 20, 5, 'Hits: ' + hits, textStyle);
-        // hitsText.anchor.set(1,0);
+        // Game winning notification
+        youWon = game.add.text(game.world.width*0.5 - 215, game.world.height*0.5, 'Congrats, you won with ' + lives + ' lives left!', textStyle3);
+        youWon.visible = false;
         
+        replayHere = game.add.text(game.world.width*0.5 - 157, game.world.height*0.5, '\n     Click this screen to play again!', textStyle2);
+        replayHere.visible = false;
+        
+        // Add hit counter
+        hitsText = game.add.text(game.world.width *0.5 - 27, 5, 'Hits: ' + hits, textStyle);
+        // hitsText.anchor.set(1,0);
+        velocityText = game.add.text(game.world.width *0.5 - 27, 5, '\n Velocity: ' + bricksKilled, textStyle);
+        velocityText.visible = false;
+        
+        // Start Button
         startButton = game.add.button(game.world.width*0.5, game.world.height*0.60, 'button', startGame, this, 1, 0, 2);
-        startButton.anchor.set(0.5);
+        startButton.anchor.set(0.5, 0.4);
     }
     
     function update() {
@@ -122,21 +148,21 @@
         // Search for collision between ball & paddle
         game.physics.arcade.collide(ball, paddle, ballHitPaddle);
         game.physics.arcade.collide(ball, bricks, ballHitBrick);
-        
+        velocityText.setText('\n Velocity: ' + bricksKilled, textStyle);
         if(playing) {
             paddle.x = game.input.x || game.world.width*0.5;
     }    }
     
-    function initBricks() {
+    function initBricks(difficulty) {
         brickInfo = {
             width: 50,
             height: 20,
             count: {
-                row: 5,
+                row: difficulty,
                 col: 7
             },
             offset: {
-                top: 50,
+                top: 40,
                 left: 60
             },
             padding: 10
@@ -159,26 +185,30 @@
     
     function ballHitBrick(ball, brick) {
         var killTween = game.add.tween(brick.scale);
-        killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
+        killTween.to({x:0,y:0}, 100, Phaser.Easing.Linear.None);
         killTween.onComplete.addOnce(function(){
             brick.kill();
         }, this);
+        bricksKilled++;
         killTween.start();
 
         score += 10;
         scoreText.setText('Points: '+score);
         
-        if(score === brickInfo.count.row*brickInfo.count.col*10) {
+        if(bricksKilled === brickInfo.count.row*brickInfo.count.col) {
             ball.alpha = false;
-               /* delay(function(){
-                alert('You won the game, congratulations!');
-                location.reload();
-            }, 500 ); // end delay */ 
-            alert('You won the game, congratulations!');
-            location.reload();
+            ball.body.velocity.set(0,0);
+            youWon.setText('Congrats, you won with ' + lives + ' lives left!');
+            youWon.visible = true;
+            replayHere.visible = true;
+            
+            game.input.onDown.addOnce(function(){
+                //alert('New Game Loading');
+                location.reload();   
+            }, this);
         }
     }
-    
+
     function ballLeaveScreen() {
         lives--;
         if(lives) {
@@ -203,8 +233,10 @@
         // plays animation on desired object
        // ball.animations.play('wobble');
         
-        ball.body.velocity.x = -1*5*(paddle.x-ball.x);
+        ball.body.velocity.x = -1*6.5*(paddle.x-ball.x);
         ball.body.velocity.y = ball.body.velocity.y * BALL_ACCEL;
+        velocity = Math.abs(ball.body.velocity.y * BALL_ACCEL);
+        velocityText.setText('\n Velocity: ' + bricksKilled, textStyle);
 }
     
     function startGame() {
@@ -215,7 +247,7 @@
 </script>
 </body>
 <footer>
-    <div style="text-align:center;"> 
+    <div style="text-align:center; color: inherit; color: #ee5f5b; text-decoration: none;"> 
         <a href="https://bprinsta.github.io" target="" text-align:center>Ben Musoke-Lubega</a>
     </div>
 </footer>
