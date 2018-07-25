@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Brick Breaker</title>
-    <style>* { padding: 0; margin: 0; }</style>
+    <style>* { padding: 0; margin: 0; background-color: lightblue; }</style>
     <script src="js/phaser.min.js"></script>
 </head>
 <body>
@@ -131,7 +131,7 @@
         hitsText = game.add.text(game.world.width *0.5 - 27, 5, 'Hits: ' + hits, textStyle);
         // hitsText.anchor.set(1,0);
         velocityText = game.add.text(game.world.width *0.5 - 27, 5, '\n Velocity: ' + velocity, textStyle);
-        //velocityText.visible = false;
+        velocityText.visible = false;
         
         // Start Button
         startButton = game.add.button(game.world.width*0.5, game.world.height*0.60, 'button', startGame, this, 1, 0, 2);
