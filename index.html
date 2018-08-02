@@ -3,7 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>Brick Breaker</title>
-    <style>* { padding: 0; margin: 0; background-color: lightblue; }</style>
+    <style>* 
+        { padding: 0; margin: 0; background-color: lightblue; }
+        a {text-decoration: none;}
+        a:link, a:visited { color: #004f80; }
+        a:hover {color: #b38902; }
+    </style>
     <script src="js/phaser.min.js"></script>
 </head>
 <body>
@@ -48,8 +53,6 @@
     var playing = false;
     var startButton;
     var difficulty = HARD;
-    
-   // var background_music = new Sound(game, 'assets/gameplay.mp3', 1, true);
     
     function preload() {
         
@@ -116,7 +119,7 @@
         livesText.anchor.set(1,0);
         
         // Lost Life Notification
-        lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5, 'You lost a life! :(', textStyle2);
+        lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.6, 'You lost a life! :(', textStyle2);
         lifeLostText.anchor.set(0.5);
         lifeLostText.visible = false;
         
@@ -179,7 +182,7 @@
     
     function ballHitBrick(ball, brick) {
         var killTween = game.add.tween(brick.scale);
-        killTween.to({x:0,y:0}, 100, Phaser.Easing.Linear.None);
+        killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
         brick.body.enable = false;
         killTween.onComplete.addOnce(function(){
             brick.kill();
