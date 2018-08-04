@@ -15,14 +15,14 @@
     <h1>
         <div style="text-align:center; color: #004f80; margin-top: 20px;" > 
             Brick Breaker
-        </div>
+        </div> 
     </h1>
 <script>
     var game = new Phaser.Game(480, 480, Phaser.CANVAS, null, {
         preload: preload, create: create, update: update
         });
-    
-    const BALL_SPEED = 400;
+    //var keyboard = new Keyboard(game);
+    const BALL_SPEED = 450;
     const BALL_ACCEL = 1.04;
     const EASY = 3;
     const MEDIUM = 5;
@@ -139,16 +139,18 @@
         // Start Button
         startButton = game.add.button(game.world.width*0.5, game.world.height*0.60, 'button', startGame, this, 1, 0, 2);
         startButton.anchor.set(0.5, 0.4);
+        //startButton.visible = false;
     }
     
     function update() {
-        
+
         // Search for collision between ball & paddle
         game.physics.arcade.collide(ball, paddle, ballHitPaddle);
         game.physics.arcade.collide(ball, bricks, ballHitBrick);
         if(playing) {
             paddle.x = game.input.x || game.world.width*0.5;
-    }    }
+        }
+    }
     
     function initBricks(difficulty) {
         brickInfo = {
@@ -231,7 +233,7 @@
         // plays animation on desired object
        // ball.animations.play('wobble');
         
-        ball.body.velocity.x = -1*6.5*(paddle.x-ball.x);
+        ball.body.velocity.x = -1*12*(paddle.x-ball.x);
         if (velocity < MAX_VELOCITY) 
         {
             ball.body.velocity.y = ball.body.velocity.y * BALL_ACCEL;
