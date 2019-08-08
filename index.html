@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Brick Breaker</title>
     <style>* 
-        { padding: 0; margin: 0; background-color: lightblue; }
+        { padding: 0; margin: 0; background-color: white; }
         a {text-decoration: none;}
         a:link, a:visited { color: #004f80; }
         a:hover {color: #b38902; }
@@ -21,7 +21,7 @@
     var game = new Phaser.Game(480, 480, Phaser.CANVAS, null, {
         preload: preload, create: create, update: update
         });
-    //var keyboard = new Keyboard(game);
+
     const BALL_SPEED = 450;
     const BALL_ACCEL = 1.04;
     const EASY = 3;
@@ -69,7 +69,6 @@
         game.load.image('ball', 'img/pokeball.png');
         game.load.image('paddle', 'img/paddle.png');
         game.load.image('brick', 'img/brick.png');
-        //game.load.spritesheet('ball', 'img/wobble.png', 20, 20);
         game.load.spritesheet('button', 'img/button.png', 360, 120);
         
         game.time.desiredFps = 60;
@@ -83,10 +82,6 @@
         // Set sprite image & location
         ball = game.add.sprite(game.world.width*0.5, game.world.height-35, 'ball');
         paddle = game.add.sprite(game.world.width*0.5, game.world.height-10, 'paddle');
-        
-        /*  Add animation to object.
-            object.animations.add(name of animation, order to display frames, framerate) */
-      //  ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
         
         ball.anchor.set(0.5);
         paddle.anchor.set(0.5,1);
@@ -139,7 +134,6 @@
         // Start Button
         startButton = game.add.button(game.world.width*0.5, game.world.height*0.60, 'button', startGame, this, 1, 0, 2);
         startButton.anchor.set(0.5, 0.4);
-        //startButton.visible = false;
     }
     
     function update() {
@@ -203,7 +197,6 @@
             replayHere.visible = true;
             
             game.input.onDown.addOnce(function(){
-                //alert('New Game Loading');
                 location.reload();   
             }, this);
         }
@@ -230,8 +223,6 @@
     function ballHitPaddle(ball, paddle) {
         hits++;
         hitsText.setText('Hits: ' + hits);
-        // plays animation on desired object
-       // ball.animations.play('wobble');
         
         ball.body.velocity.x = -1*12*(paddle.x-ball.x);
         if (velocity < MAX_VELOCITY) 
@@ -244,15 +235,14 @@
     
     function startGame() {
         startButton.destroy();
-       // background_music.play();
         ball.body.velocity.set(0, -BALL_SPEED);
         playing = true;
 }
 </script>
 </body>
-<footer>
+<foot>
     <div style="text-align:center; color: inherit; color: #ee5f5b; text-decoration: none;"> 
         <a href="https://bprinsta.github.io" target="" text-align:center>Ben Musoke-Lubega</a>
     </div>
-</footer>
+</foot>
 </html>
